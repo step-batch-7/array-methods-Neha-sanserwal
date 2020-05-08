@@ -19,5 +19,7 @@ typedef struct
 Array *map(Array *src, Mapper mapper);
 Array *filter(Array *src, Predicate predicate);
 int reduce(Array *src, int init, Reducer reducer);
+Array *create_array(int length);
+void copy_values(int *from, Array *to);
 
 #endif
