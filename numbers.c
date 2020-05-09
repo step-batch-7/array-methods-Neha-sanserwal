@@ -32,6 +32,13 @@ int product(int num1, int num2)
   return num1 * num2;
 }
 
+Object product_int_void(Object num1, Object num2)
+{
+
+  *(int *)&num2 = (*(int *)&num1 * *(int *)&num2);
+  return num2;
+}
+
 void display(Array *src)
 {
   for (int i = 0; i < src->length; i++)
@@ -59,6 +66,9 @@ void display_void(ArrayVoid_ptr array_void, DisplayData display_function)
 int main()
 {
   int length = 5;
+  void *inti_ptr;
+  *(int *)&inti_ptr = 1;
+
   int sample[] = {1, 2, 3, 4, 5};
   Array *src = create_array(5);
   copy_values(sample, src);
@@ -85,7 +95,10 @@ int main()
   printf("Even numbers are :\n");
   display(filtered_values);
 
-  int reduced_value = reduce(mapped_values, 1, &product);
-  printf("product of mapped numbers is : %d", reduced_value);
+  Object reduced_void = reduce_void(src_void, inti_ptr, &product_int_void);
+  printf("product of mapped numbers is : %d\n", *(int *)&reduced_void);
+
+  int reduced_value = reduce(src, 1, &product);
+  printf("product of mapped numbers is : %d\n", reduced_value);
   return 0;
 }

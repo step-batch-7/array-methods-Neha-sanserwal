@@ -89,6 +89,15 @@ Array *filter(Array *src, Predicate predicator)
   return filtered_values;
 }
 
+Object reduce_void(ArrayVoid_ptr src, void *initial_value, ReducerVoid reducer)
+{
+  for (int i = 0; i < src->length; i++)
+  {
+    initial_value = reducer(src->array[i], initial_value);
+  }
+  return initial_value;
+}
+
 int reduce(Array *src, int initial_value, Reducer reducer)
 {
   int reduced_value = initial_value;
