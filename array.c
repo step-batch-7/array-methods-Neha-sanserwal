@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "array.h"
+#include "array_void.h"
 
 Array *create_array(int length)
 {
@@ -9,12 +9,30 @@ Array *create_array(int length)
   return array;
 }
 
+ArrayVoid_ptr create_void_array(int length)
+{
+  ArrayVoid_ptr array = malloc(sizeof(ArrayVoid));
+  array->length = length;
+  array->array = malloc(sizeof(Object) * length);
+  return array;
+}
+
 void copy_values(int *from, Array *to)
 {
   for (int i = 0; i < to->length; i++)
   {
     to->array[i] = from[i];
   }
+}
+
+ArrayVoid_ptr map_void(ArrayVoid_ptr src, MapperVoid mapper)
+{
+  ArrayVoid_ptr result = create_void_array(src->length);
+  for (int i = 0; i < src->length; i++)
+  {
+    result->array[i] = mapper(src->array[i]);
+  }
+  return result;
 }
 
 Array *map(Array *src, Mapper mapper)

@@ -1,14 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "array.h"
-
-int add_one(int number);
+#include "array_void.h"
+typedef void (*DisplayData)(ArrayVoid_ptr);
 Bool is_even(int number);
 void display(Array *arr);
 int product(int num1, int num2);
 int add_one(int number)
 {
+
   return number + 1;
+}
+void *add_one_void(void *num)
+{
+  *(int *)&num += 1;
+  return num;
 }
 
 Bool is_even(int number)
@@ -30,14 +35,38 @@ void display(Array *src)
   printf("\n");
 }
 
+void display_numbers(ArrayVoid_ptr src)
+{
+  for (int i = 0; i < src->length; i++)
+  {
+    printf("%d ", *(int *)&src->array[i]);
+  }
+  printf("\n");
+}
+
+void display_void(ArrayVoid_ptr array_void, DisplayData display_function)
+{
+
+  display_function(array_void);
+}
+
 int main()
 {
   int length = 5;
+  int sample[] = {1, 2, 3, 4, 5};
   Array *src = create_array(5);
-  for (int i = 0; i < src->length; i++)
+  copy_values(sample, src);
+
+  ArrayVoid_ptr src_void = create_void_array(length);
+  for (int i = 0; i < length; i++)
   {
-    src->array[i] = i;
+    *(int *)&src_void->array[i] = sample[i];
   }
+  ArrayVoid_ptr mapped_void = map_void(src_void, &add_one_void);
+
+  printf("output of mapped void: \n");
+  display_void(mapped_void, &display_numbers);
+
   Array *mapped_values = map(src, &add_one);
   printf("Numbers after adding one are :\n");
   display(mapped_values);
