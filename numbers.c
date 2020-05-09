@@ -3,14 +3,15 @@
 #include "array_void.h"
 typedef void (*DisplayData)(ArrayVoid_ptr);
 Bool is_even(int number);
+int add_one(int number);
 void display(Array *arr);
 int product(int num1, int num2);
+
 int add_one(int number)
 {
-
   return number + 1;
 }
-void *add_one_void(void *num)
+void *add_one_void(Object num)
 {
   *(int *)&num += 1;
   return num;
@@ -19,6 +20,11 @@ void *add_one_void(void *num)
 Bool is_even(int number)
 {
   return number % 2 == 0;
+}
+
+Bool is_even_void(Object number)
+{
+  return is_even(*(int *)&number);
 }
 
 int product(int num1, int num2)
@@ -62,14 +68,18 @@ int main()
   {
     *(int *)&src_void->array[i] = sample[i];
   }
-  ArrayVoid_ptr mapped_void = map_void(src_void, &add_one_void);
 
+  ArrayVoid_ptr mapped_void = map_void(src_void, &add_one_void);
   printf("output of mapped void: \n");
   display_void(mapped_void, &display_numbers);
 
   Array *mapped_values = map(src, &add_one);
   printf("Numbers after adding one are :\n");
   display(mapped_values);
+
+  ArrayVoid_ptr filtered_void = filter_void(src_void, &is_even_void);
+  printf("output of filter void: \n");
+  display_void(filtered_void, &display_numbers);
 
   Array *filtered_values = filter(src, &is_even);
   printf("Even numbers are :\n");

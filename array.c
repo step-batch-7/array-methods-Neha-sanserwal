@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "array_void.h"
 
 Array *create_array(int length)
@@ -25,6 +26,15 @@ void copy_values(int *from, Array *to)
   }
 }
 
+void copy_void_values(void **from, ArrayVoid_ptr to)
+{
+  for (int i = 0; i < to->length; i++)
+  {
+
+    to->array[i] = from[i];
+  }
+}
+
 ArrayVoid_ptr map_void(ArrayVoid_ptr src, MapperVoid mapper)
 {
   ArrayVoid_ptr result = create_void_array(src->length);
@@ -43,6 +53,23 @@ Array *map(Array *src, Mapper mapper)
     result->array[i] = mapper(src->array[i]);
   }
   return result;
+}
+
+ArrayVoid_ptr filter_void(ArrayVoid_ptr src, PredicateVoid predicator)
+{
+  void *result[src->length];
+  int length_of_result = 0;
+  for (int value_count = 0; value_count < src->length; value_count++)
+  {
+    if (predicator(src->array[value_count]))
+    {
+      result[length_of_result] = src->array[value_count];
+      ++length_of_result;
+    }
+  }
+  ArrayVoid_ptr filtered_values = create_void_array(length_of_result);
+  copy_void_values(result, filtered_values);
+  return filtered_values;
 }
 
 Array *filter(Array *src, Predicate predicator)
